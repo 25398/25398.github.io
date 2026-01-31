@@ -1,84 +1,336 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="miograme.ico" type="image/x-icon">
   <title>MioGrame</title>
+  <style>
+    /* 全局样式重置与基础配置 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Microsoft YaHei", 宋体, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #1a1a2e; /* 深色调背景，贴合MC服务器质感 */
+      color: #f0f0f0; /* 浅灰色正文，保证可读性 */
+      line-height: 1.8; /* 行高优化，提升阅读体验 */
+      padding-bottom: 50px;
+    }
+
+    /* 头部横幅样式 */
+    .banner {
+      background-image: url(banner.webp);
+      background-size: cover; /* 背景图覆盖整个容器，不拉伸 */
+      background-position: center; /* 背景图居中显示 */
+      padding: 60px 0; /* 移除左右padding，交给内部容器控制 */
+      position: relative;
+      min-height: 300px;
+      /* 背景遮罩，提升前景文字可读性 */
+      box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.7);
+    }
+
+    /* 新增：banner内部容器，和下方container样式一致 */
+    .banner-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* 用户操作表单卡片 */
+    .user-ops {
+      width: 320px;
+      border: 2px solid gold;
+      border-radius: 12px;
+      padding: 20px;
+      background-color: rgba(249, 249, 249, 0.95);
+      color: #333;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      /* 卡片阴影，提升立体感 */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .user-ops legend {
+      font-size: 16px;
+      font-weight: bold;
+      color: gold;
+      padding: 0 10px;
+    }
+
+    /* 表单统一样式 */
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .form-group input {
+      flex: 1;
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .form-group input:focus {
+      border-color: gold;
+      box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+    }
+
+    .form-group button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      background-color: #e0e0e0;
+      transition: background-color 0.3s ease;
+    }
+
+    .form-group button:hover {
+      background-color: gold;
+      color: #333;
+      font-weight: 500;
+    }
+
+    /* 页面标题 */
+    .page-title {
+      font-size: 48px;
+      color: gold;
+      margin-top: 40px; /* 调整上边距，适配新容器 */
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    /* 主体内容容器 */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* 章节标题样式 */
+    h2 {
+      color: gold;
+      margin: 40px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+    }
+
+    /* 段落文本样式 */
+    p {
+      margin-bottom: 15px;
+      text-indent: 2em; /* 保留首行缩进 */
+    }
+
+    /* IP地址hover效果（优化过渡） */
+    .ip {
+      color: #f0f0f0;
+      text-decoration: underline;
+      cursor: pointer;
+      transition: all 0.3s ease; /* 平滑过渡动画 */
+    }
+
+    .ip:hover {
+      font-weight: bold;
+      color: gold;
+      text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    }
+
+    /* 服务器地址项样式 */
+    .server-ip {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      width: fit-content;
+    }
+    /* 二维码区域样式 */
+    .qrcode-area {
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    .qrcode-tip {
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    .qrcode-img {
+      border: 5px solid gold;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      max-width: 250px;
+      height: auto;
+      /* 轻微hover放大效果 */
+      transition: transform 0.3s ease;
+    }
+
+    .qrcode-img:hover {
+      transform: scale(1.05);
+    }
+
+    /* 友情鸣谢样式 */
+    .thanks-list {
+      margin: 20px 0;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+    }
+
+    .thanks-list dt {
+      font-size: 18px;
+      color: gold;
+      margin-bottom: 15px;
+    }
+
+    .thanks-list dd {
+      margin: 8px 0;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    .thanks-list dd:hover {
+      background-color: rgba(255, 215, 0, 0.1);
+    }
+
+    /* 在线游玩iframe响应式 */
+    .mc-iframe {
+      width: 100%;
+      max-width: 1620px;
+      height: 720px;
+      border: none;
+      border-radius: 12px;
+      margin: 20px 0;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 分割线样式优化 */
+    hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(255, 215, 0, 0.5), transparent);
+      margin: 30px 0;
+    }
+
+    /* 响应式适配（手机端） */
+    @media (max-width: 768px) {
+      .user-ops {
+        position: static;
+        width: 100%;
+        margin-bottom: 30px;
+      }
+
+      .page-title {
+        font-size: 36px;
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      .mc-iframe {
+        height: 400px;
+      }
+
+      .server-ip {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-  <fieldset style="width: 300px; height: 90px; position: absolute; top:0px; right:0px; border: 2px solid gold; border-radius: 10px; padding: 10px; background-color: #f9f9f9;">
-  <legend style="font-size: 14px; font-weight: bold; color: gold;">用户操作</legend>
-  <label>
-<form action="/register" method="get" style="position: absolute; top: 0px; right:20px">
-账号:<input type="text" name="name" required>
-  <button type="submit" style="font-size: 12px;">注册</button>
-  <button type="reset" style="font-size: 12px;">清空</button>
-<br>
-</form>
-</label>
-<label>
-<form action="/login" method="get" style="position: absolute; top: 30px;right:64px">
-邮箱:<input type="email" name="email" required>
-  <button type="submit" style="font-size: 12px;">登录</button>
-  <br>
-</form>
-</label>
-<label>
-<form action="https://cn.bing.com/search?" target="_blank" method="get" style="position: absolute; top: 60px;right:64px">
-搜索:<input type="text" name="q" required>
-  <button type="submit" style="font-size: 12px;">搜索</button>
-  <br>
-</form>
-</label>
-</fieldset>
-<br>
-<h1><font size="7" color="gold" face="宋体">MioGrame</font></h1>
-<hr>
-<h2>服务器介绍</h2>
-<p>&nbsp;&nbsp;MioGrame是一个基于Minecraft的多人联机服务器，提供多种玩法，包括纯净生存、小游戏和RPG、粘液科技等。服务器注重玩家体验，致力于打造一个友好且有趣的游戏环境。</p>
-<p>&nbsp;&nbsp;服务器分为纯净生存服、黏液科技服，二者数据相互独立。</p>
-<hr>
-<h2>服务器地址</h2>
+  <!-- 头部横幅 -->
+  <header class="banner">
+    <!-- 新增：banner内部容器，和下方container样式一致 -->
+    <div class="banner-container">
+      <!-- 页面标题 -->
+      <h1 class="page-title">MioGrame</h1>
+    </div>
+  </header>
 
-<p><div title="纯净生存服，附带有小游戏、RPG等多种玩法"><b>生存服:</b><em>miograme.fun</em></div></p>
-<p><div title="黏液科技服，拥有丰富的黏液科技附属"><b>黏液服:</b><em>mcqr.net</em></div></p>
-<p><div title="备用地址，当生存服无法访问时使用"><b>备用地址:</b><em>play.simpfun.cn:26787</em></div></p>
-<hr>
-<h2>服务器交流群</h2>
-<p><strong>点击或扫描下方二维码，加入服务器交流群：</strong></p>
-<p><marquee direction="down">↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓</marquee></p>
-<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=TcVGYJ8riQyfhs4CKXXQc5RjlH5woNnQ&jump_from=webapi&authKey=m6/Mh+O5SMhtQGYaslNui2RvQ1pBXAEIIYalFTo08igrcieAlJffV341JM5w2PEy"><img border="0" src="miograme.png" alt="MioGrame" title="QQ群号:1051559616"></a>
-<hr>
-<p>
-  <dl>
-  <dt>友情鸣谢:</dt>
-  <div title="为黏液服提供了性能优秀的机器，并持续赞助了服务器">
-    <dd>momoqian</dd>
-  </div>
-  <div title="赞助了服务器">
-    <dd>XPTX</dd>
-  </div>
-  <div title="赞助了服务器">
-    <dd>CatLikeFish</dd>
-  </div>
-  <div title="在创意提供、服务器管理、技术支持等方面给予了帮助">
-    <dd>MayBegonia</dd>
-  </div>
-  <div title="为副本建筑提供了大力支持">
-    <dd>pencsg</dd>
-  </div>
-  <div title="提供了许多实用建议">
-    <dd>Zhao_Li0a</dd>
-  </div>
-  <div title="实时反馈了服务器问题">
-    <dd>ttkkcc_bin22</dd>
-  </div>
-</dl>
-</p>
-<hr>
-<h2>在线游玩（1.8.8）</h2>
-<iframe src="https://play.mc.js.cool/1.8wasm/" style="width: 1620px; height: 720px; border: none;">
-</iframe>
+  <!-- 主体内容 -->
+  <main class="container">
+    <!-- 服务器介绍 -->
+    <section>
+      <h2>服务器介绍</h2>
+      <p>MioGrame是一个基于Minecraft的多人联机服务器，提供多种玩法，包括纯净生存、小游戏和RPG、粘液科技等。服务器注重玩家体验，致力于打造一个友好且有趣的游戏环境。</p>
+      <p>服务器分为纯净生存服、黏液科技服，二者数据相互独立。</p>
+      <hr>
+    </section>
+
+    <!-- 服务器地址 -->
+    <section>
+      <h2>服务器地址(1.18.2-1.21.1)</h2>
+      <p class="server-ip" title="纯净生存服，附带有小游戏、RPG等多种玩法">
+        <b>生存服:</b><em class="ip">miograme.fun</em>
+      </p>
+      <p class="server-ip" title="黏液科技服，拥有丰富的黏液科技附属">
+        <b>黏液服:</b><em class="ip">mcqr.net</em>
+      </p>
+      <p class="server-ip" title="备用地址，当生存服无法访问时使用">
+        <b>备用地址:</b><em class="ip">play.simpfun.cn:26787</em>
+      </p>
+      <hr>
+    </section>
+
+    <!-- 服务器交流群 -->
+    <section>
+      <h2>服务器交流群</h2>
+      <div class="qrcode-area">
+        <p class="qrcode-tip">点击或扫描下方二维码，加入服务器交流群：</p>
+        <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=TcVGYJ8riQyfhs4CKXXQc5RjlH5woNnQ&jump_from=webapi&authKey=m6/Mh+O5SMhtQGYaslNui2RvQ1pBXAEIIYalFTo08igrcieAlJffV341JM5w2PEy">
+          <img class="qrcode-img" border="0" src="miograme.png" alt="MioGrame" title="QQ群号:1051559616">
+        </a>
+      </div>
+      <hr>
+    </section>
+
+    <!-- 友情鸣谢 -->
+    <section>
+      <h2>友情鸣谢</h2>
+      <dl class="thanks-list">
+        <dt>鸣谢名单:</dt>
+        <div title="为黏液服提供了性能优秀的机器，并持续赞助了服务器">
+          <dd>momoqian</dd>
+        </div>
+        <div title="提供了许多实用建议">
+          <dd>Zhao_Li0a</dd>
+        </div>
+        <div title="实时反馈了服务器问题">
+          <dd>ttkkcc_bin22</dd>
+        </div>
+        <div title="在创意提供、服务器管理、技术支持等方面给予了帮助">
+          <dd>MayBegonia</dd>
+        </div>
+        <div title="为副本建筑提供了大力支持">
+          <dd>pencsg</dd>
+        </div>
+        <div title="赞助了服务器">
+          <dd>XPTX</dd>
+        </div>
+        <div title="赞助了服务器">
+          <dd>CatLikeFish</dd>
+        </div>
+      </dl>
+      <hr>
+    </section>
+
+    <!-- 在线游玩 -->
+    <section>
+      <h2>在线游玩（1.8.8）</h2>
+      <iframe class="mc-iframe" src="https://play.mc.js.cool/1.8wasm/"></iframe>
+    </section>
+  </main>
 </body>
 </html>
